@@ -1,0 +1,61 @@
+# ---------------------------------------------------------------------------
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ---------------------------------------------------------------------------
+
+# camel-k: dependency=mvn:io.quarkus:quarkus-jdbc-postgresql
+# camel-k: build-property=quarkus.datasource.camel.db-kind=postgresql
+# camel-k: config=secret:my-datasource
+# camel-k: trait=prometheus.enabled=true
+
+- rest:
+    get:
+      - to: "direct:get"
+        path: "/customers/{name}"
+    get:
+      - to: "direct:getall"
+        path: "/customers/"        
+    post:
+      - to: "direct:post"
+        path: "/customers/"
+
+- from:
+    uri: "direct:getall"
+    steps:
+      - set-body:
+          simple: "select * from customers"
+      - to: jdbc:camel
+      - set-body:
+          simple: "${bodyAs(String)}"
+
+- from:
+    uri: "direct:get"
+    steps:
+      - set-body:
+          simple: "select * from customers where name='${header.name}'"
+      - to: jdbc:camel
+      - set-body:
+          simple: "${bodyAs(String)}"
+
+- from:
+    uri: "direct:post"
+    steps:
+      - unmarshal:
+          json: 
+            library: Jackson        
+      - to: log:info
+      - set-body:
+          simple: "insert into customers (name, city) values ('${body[name]}', '${body[city]}')"
+      - to: jdbc:camel          
