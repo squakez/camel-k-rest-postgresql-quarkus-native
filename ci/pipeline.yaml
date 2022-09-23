@@ -78,6 +78,9 @@ spec:
   - name: repo-url
     type: string
     description: The git repo URL to clone from.
+  - name: repo-branch
+    type: string
+    description: The git repo branch.    
   workspaces:
   - name: shared-data
     description: | 
@@ -94,6 +97,8 @@ spec:
     params:
     - name: url
       value: $(params.repo-url)
+    - name: revision
+      value: $(params.repo-branch)      
   # Run in test environment
   - name: kamel-run
     runAfter: ["fetch-source"]
@@ -179,3 +184,5 @@ spec:
   params:
   - name: repo-url
     value: https://github.com/squakez/camel-k-rest-postgresql-quarkus-native.git
+  - name: repo-branch
+    value: feat/tekton    
