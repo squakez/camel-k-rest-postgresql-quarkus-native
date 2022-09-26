@@ -19,6 +19,7 @@
 # camel-k: build-property=quarkus.datasource.camel.db-kind=postgresql
 # camel-k: config=secret:my-datasource
 # camel-k: trait=prometheus.enabled=true
+# camel-k: trait=service.node-port=true
 
 - rest:
     get:

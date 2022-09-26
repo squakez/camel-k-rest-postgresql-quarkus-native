@@ -51,7 +51,7 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: execute-test
-  description: Execute some smote test
+  description: Execute some smoke test
 spec:
   params:
     - name: script
@@ -62,7 +62,8 @@ spec:
   - name: source
   steps:
   - name: test
-    image: alpine
+    # use any image containing the tooling required by your test
+    image: alpine/curl
     script: |
       cd $(workspaces.source.path)
       $(params.script) $(params.hostname)
@@ -122,7 +123,7 @@ spec:
       workspace: shared-data
     params:
       - name: script
-        value: test/run-test.sh    
+        value: test/e2e-test.sh    
       - name: hostname
         value: $(tasks.kamel-run.results.integration-name).development
   # Promote to production
@@ -163,9 +164,9 @@ spec:
     name: pipeline-cicd
   taskRunSpecs:
     - pipelineTaskName: kamel-run
-      taskServiceAccountName: camel-k-pipeline
+      taskServiceAccountName: camel-k-pipeline-sa
     - pipelineTaskName: kamel-promote
-      taskServiceAccountName: camel-k-pipeline      
+      taskServiceAccountName: camel-k-pipeline-sa   
   podTemplate:
     securityContext:
       fsGroup: 65532
