@@ -44,7 +44,6 @@ spec:
   - name: promote
     image: docker.io/apache/camel-k:1.10.0
     script: |
-      echo "promote $(params.integration-name) -n $(params.namespace) --to $(params.to)"
       kamel promote $(params.integration-name) -n $(params.namespace) --to $(params.to)
 ---
 apiVersion: tekton.dev/v1beta1

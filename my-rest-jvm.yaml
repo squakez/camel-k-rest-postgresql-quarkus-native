@@ -31,6 +31,9 @@
     post:
       - to: "direct:post"
         path: "/customers/"
+    delete:
+      - to: "direct:delete"
+        path: "/customers/{name}"        
 
 - from:
     uri: "direct:getall"
@@ -59,4 +62,11 @@
       - to: log:info
       - set-body:
           simple: "insert into customers (name, city) values ('${body[name]}', '${body[city]}')"
-      - to: jdbc:camel          
+      - to: jdbc:camel
+
+- from:
+    uri: "direct:delete"
+    steps:
+      - set-body:
+          simple: "delete from customers name = '${header.name}'"
+      - to: jdbc:camel      
