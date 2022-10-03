@@ -14,7 +14,7 @@ if [[ "$HTTP_GET" != "200" ]]; then
 fi
 # Delete the user
 HTTP_DELETE=$(curl -o /dev/null -s -w "%{http_code}\n" --request DELETE http://$1/customers/my-name)
-if [[ "$HTTP_DELETE" != "404" ]]; then
-    echo "ERROR: expected a 404 HTTP code"
+if [[ "$HTTP_DELETE" != "200" ]]; then
+    echo "ERROR: expected a 200 HTTP code"
     exit 2
 fi

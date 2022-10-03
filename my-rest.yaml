@@ -18,14 +18,12 @@
 # camel-k: dependency=mvn:io.quarkus:quarkus-jdbc-postgresql
 # camel-k: build-property=quarkus.datasource.camel.db-kind=postgresql
 # camel-k: config=secret:my-datasource
-# camel-k: trait=prometheus.enabled=true
 # camel-k: trait=service.node-port=true
 
 - rest:
     get:
       - to: "direct:get"
         path: "/customers/{name}"
-    get:
       - to: "direct:getall"
         path: "/customers/"        
     post:
@@ -40,6 +38,7 @@
     steps:
       - set-body:
           simple: "select * from customers"
+      - to: log:info
       - to: jdbc:camel
       - set-body:
           simple: "${bodyAs(String)}"
@@ -49,6 +48,7 @@
     steps:
       - set-body:
           simple: "select * from customers where name='${header.name}'"
+      - to: log:info
       - to: jdbc:camel
       - set-body:
           simple: "${bodyAs(String)}"
@@ -68,5 +68,6 @@
     uri: "direct:delete"
     steps:
       - set-body:
-          simple: "delete from customers name = '${header.name}'"
+          simple: "delete from customers where name = '${header.name}'"
+      - to: log:info
       - to: jdbc:camel      

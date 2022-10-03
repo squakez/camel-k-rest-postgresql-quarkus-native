@@ -26,10 +26,12 @@ k create secret generic my-datasource --from-file datasource-prod.properties -n 
 
 Development:
 
-kubectl exec -it postgres-dev-xxxxxxxx-yyyyy -n development -- psql -U postgresadmin --password postgresdb
-CREATE TABLE customers (name TEXT PRIMARY KEY, city TEXT);
+kubectl exec -it postgres-dev-xxxxxxxx-yyyyy -n development -- psql -U postgresadmin --password postgresdb -c 'CREATE TABLE customers (name TEXT PRIMARY KEY, city TEXT)'
 
 Production:
 
-kubectl exec -it postgres-prod-xxxxxxxx-yyyyy -n production -- psql -U postgresadmin --password postgresdb
-CREATE TABLE customers (name TEXT PRIMARY KEY, city TEXT);
+kubectl exec -it postgres-prod-xxxxxxxx-yyyyy -n production -- psql -U postgresadmin --password postgresdb -c 'CREATE TABLE customers (name TEXT PRIMARY KEY, city TEXT)'
+
+### Clean test db utility
+
+kubectl exec -it postgres-dev-ddddc75cb-gxzff -n development -- psql -U postgresadmin --password postgresdb -c 'delete from customers'
