@@ -22,7 +22,8 @@ spec:
     script: |
       cd $(workspaces.source.path)
       # Run the integration and let's use the output to scrape the integration name
-      kamel_output=$(kamel run $(params.filename) -n $(params.namespace))
+      # We need to use the --wait option in order to wait until the Integration is running)
+      kamel_output=$(kamel run $(params.filename) -n $(params.namespace) --wait)
       echo $kamel_output | grep -o '".*"' | sed "s/\"//g" | tr -d '\n' | tee $(results.integration-name.path)
 ---
 apiVersion: tekton.dev/v1beta1
@@ -109,7 +110,7 @@ spec:
       workspace: shared-data      
     params:
       - name: filename
-        value: my-rest-jvm.yaml
+        value: my-rest.yaml
       - name: namespace
         value: development
   # E2E in test environment
